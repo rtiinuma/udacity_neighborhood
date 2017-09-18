@@ -178,10 +178,6 @@ function initMap() {
     // Style the markers a bit. This will be our listing marker icon.
     var defaultIcon = makeMarkerIcon('0091ff');
 
-    // Create a "highlighted location" marker color for when the user
-    // mouses over the marker.
-    var highlightedIcon = makeMarkerIcon('FFFF24');
-
     var bounds = new google.maps.LatLngBounds();
     // The following group uses the location array to create an array of markers on initialize.
     for (var i = 0; i < locations.length; i++) {
@@ -200,20 +196,30 @@ function initMap() {
         // Push the marker to our array of markers.
         markers.push(marker);
         // Create an onclick event to open the large infowindow at each marker.
-        marker.addListener('click', function() {
-            populateInfoWindow(this);
-        });
+        marker.addListener('click', markerClick);
         // Two event listeners - one for mouseover, one for mouseout,
         // to change the colors back and forth.
-        marker.addListener('mouseover', function() {
-            this.setIcon(highlightedIcon);
-        });
-        marker.addListener('mouseout', function() {
-            this.setIcon(defaultIcon);
-        });
+        marker.addListener('mouseover', markerMouseOver);
+        marker.addListener('mouseout', markerMouseOut);
         bounds.extend(marker.position);
     }
     map.fitBounds(bounds);
+}
+
+function markerMouseOut() {
+    var defaultIcon = makeMarkerIcon('0091ff');
+    this.setIcon(defaultIcon);
+}
+
+function markerMouseOver() {
+    // Create a "highlighted location" marker color for when the user
+    // mouses over the marker.
+    var highlightedIcon = makeMarkerIcon('FFFF24');
+    this.setIcon(highlightedIcon);
+}
+
+function markerClick() {
+    populateInfoWindow(this);
 }
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
@@ -222,14 +228,13 @@ function initMap() {
 function populateInfoWindow(marker) {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
-        if (infowindow.marker != null)
+        if (infowindow.marker)
             infowindow.marker.setAnimation(null);
         marker.setAnimation(google.maps.Animation.BOUNCE);
-        infowindow.marker = marker;
         var image = 'Image could not be loaded.';
 
         var url = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&tags=' + marker.title + '&name=value&api_key=0f9ab3806201c92011b96c6349dc71e8&format=json&' +
-            'lat=' + marker.position.lat() + '&lon=' + marker.position.lng() + '&sort=interestingness-des&per_page=1&extras=url_t&jsoncallback=?'
+            'lat=' + marker.position.lat() + '&lon=' + marker.position.lng() + '&sort=interestingness-des&per_page=1&extras=url_t&jsoncallback=?';
         var photosrc;
         $.getJSON(url, function(data) {
             if (data.photos.photo[0] && data.photos.photo[0].url_t) {
@@ -237,13 +242,15 @@ function populateInfoWindow(marker) {
             }
 
             infowindow.setContent('<div>' + marker.title + '<br>' + image + '</div>');
+            infowindow.open(map, marker);
         }).fail(function() {
             image = 'Flickr tmage could not be loaded.';
             infowindow.setContent('<div>' + marker.title + '<br>' + image + '</div>');
+            infowindow.open(map, marker);
         });
+        infowindow.marker = marker;
 
         //infowindow.setContent('<div>' + marker.title + '<img src="' + photosrc + '"></div>');
-        infowindow.open(map, marker);
         // Make sure the marker property is cleared if the infowindow is closed.
         infowindow.addListener('closeclick', function() {
             infowindow.marker = null;
@@ -291,7 +298,7 @@ function makeMarkerIcon(markerColor) {
 function gm_authFailure() {
     var $map = $('#map');
     $map.text(" There is an issue loading Google maps. Please try again later.");
-};
+}
 
 var ViewModel = function() {
     var self = this;
@@ -299,16 +306,16 @@ var ViewModel = function() {
     this.filter = ko.observable("");
     this.filtered = ko.computed(function() {
         if (!self.filter()) {
-        	// show all locations and markers
+            // show all locations and markers
             self.locationList.removeAll();
             locations.forEach(function(loc) {
                 self.locationList.push(loc);
             });
             markers.forEach(function(marker) {
-                marker.setMap(map)
+                marker.setMap(map);
             });
         } else {
-        	// show specific locations and markers
+            // show specific locations and markers
             self.locationList.removeAll();
             hideListings();
             locations.forEach(function(loc) {
@@ -316,7 +323,7 @@ var ViewModel = function() {
                     self.locationList().push(loc);
                     markers.forEach(function(marker) {
                         if (marker.title == loc.title)
-                            marker.setMap(map)
+                            marker.setMap(map);
                     });
                 }
             });
@@ -326,4 +333,4 @@ var ViewModel = function() {
     }, this);
 }
 
-ko.applyBindings(new ViewModel())
+ko.applyBindings(new ViewModel());
