@@ -1,45 +1,41 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <style>
-      html,
-      body {
+    html,
+    body {
         font-family: Arial, sans-serif;
         height: 100%;
         margin: 0;
         padding: 0;
-      }
+    }
 
-      .container {
+    .container {
         height: 100%;
         position: relative;
-      }
+    }
 
-      input {
+    input {
         font-size: 12px;
-      }
+    }
 
-      h1 {
+    h1 {
         color: #525454;
         font-size: 22px;
         margin: 0 0 10px 0;
         text-align: center;
-      }
+    }
 
-      #hide-listings,
-      #show-listings {
-        width: 48%;
-      }
-
-      #map {
-        bottom:0px;
+    #map {
+        bottom: 0px;
         height: 100%;
         left: 362px;
         position: absolute;
         right: 0px;
-      }
+    }
 
-      .options-box {
+    .options-box {
         background: #fff;
         border: 1px solid #999;
         border-radius: 3px;
@@ -48,28 +44,40 @@
         padding: 10px 10px 30px 10px;
         text-align: left;
         width: 340px;
-      }
+    }
+
+    #flickr {
+        position: absolute;
+        bottom: 0;
+        width: 200px;
+    }
     </style>
-  </head>
-  <body>
+</head>
+
+<body>
     <div class="container">
-      <div class="options-box">
-        <h1>Udacity Neighborhood App</h1>
-        <div>
-            <label for="filter">Filter: </label><input type="text" data-bind="textinput: filter, valueUpdate: 'afterkeydown'">
+        <div class="options-box">
+            <h1>Udacity Neighborhood App</h1>
+            <div>
+                <label for="filter">Filter: </label>
+                <input type="text" data-bind="textinput: filter, valueUpdate: 'afterkeydown'">
+            </div>
+            <div>
+                <ul data-bind="foreach: filtered">
+                    <li data-bind="text: title, click: showMarker"></li>
+                </ul>
+            </div>
+            <div id="flickr">
+                <img src="img/flickr_logo.png" alt="Flickr logo" width="50%">
+            </div>
         </div>
-        <div>
-            <ul data-bind="foreach: filtered">
-                <li data-bind="text: title, click: showMarker"></li>
-            </ul>
-        </div>
-      </div>
-      <div id="map">There is an issue loading Google maps. Please try again later.</div>
+        <div id="map">There is an issue loading Google maps. Please try again later.</div>
     </div>
     <script src="js/lib/jquery.min.js"></script>
     <script src="js/lib/knockout-3.2.0.js"></script>
     <script src="./js/app.js"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA50kjZ-v0kZ6yZE0NS2BxorJ6Cfh45934&v=3&callback=initMap">
     </script>
-  </body>
+</body>
+
 </html>
