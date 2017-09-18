@@ -331,6 +331,6 @@ var ViewModel = function() {
 
         return self.locationList();
     }, this);
-}
+};
 
 ko.applyBindings(new ViewModel());
