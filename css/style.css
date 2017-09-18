@@ -8,7 +8,7 @@
 
     .container {
         height: 100%;
-        position: relative;
+        width: 100%;
     }
 
     input {
@@ -23,26 +23,29 @@
     }
 
     #map {
-        bottom: 0px;
+        overflow: hidden;
         height: 100%;
-        left: 362px;
-        position: absolute;
-        right: 0px;
     }
 
     .options-box {
         background: #fff;
-        border: 1px solid #999;
         border-radius: 3px;
-        height: 100%;
         line-height: 35px;
         padding: 10px 10px 30px 10px;
         text-align: left;
-        width: 340px;
+        float: left;
+        margin-right: 20px;
+        width: 20%;
     }
 
     #flickr {
         position: absolute;
         bottom: 0;
-        width: 200px;
+        width: 10%;
+    }
+
+    @media screen and (max-width: 600px) {
+        .options-box {
+            width: 50%;
+        }
     }
